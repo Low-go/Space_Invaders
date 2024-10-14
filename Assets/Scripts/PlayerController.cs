@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private float maxSpeed = 5f;
     private float acceleration = 10f;
     private float deceleration = 5f;
+    public GameObject projectilePrefab;
 
     private Vector3 velocity;
 
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
         // Get input and reverse it
         float horizontalInput = -Input.GetAxis("Horizontal");
         float verticalInput = -Input.GetAxis("Vertical");
+
 
         // Calculate target velocity
         Vector3 targetVelocity = new Vector3(horizontalInput, 0f, verticalInput) * maxSpeed;
@@ -43,9 +45,9 @@ public class PlayerController : MonoBehaviour
         transform.position = newPosition;
 
         // Projectile logic (commented out for now)
-        // if (Input.GetKeyDown(KeyCode.Space))
-        // {
-        //     Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
-        // }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+                Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
+        }
     }
 }
