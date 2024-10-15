@@ -29,7 +29,7 @@ public class SpawnManager : MonoBehaviour
 
     void SpawnEnemiesAtRandom()
     {
-        Vector3 spawnPos = new Vector3(Random.Range(-spawnRange, spawnRange), 0.36f, spawnPosZ); // Random x location
+        Vector3 spawnPos = new Vector3(Random.Range(-spawnRange, spawnRange), 0.573f, spawnPosZ); // Random x location
         Instantiate(enemyPrefab, spawnPos, enemyPrefab.transform.rotation); // Instantiate
     }
 }

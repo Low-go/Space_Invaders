@@ -21,4 +21,5 @@ public class EnemyMove : MonoBehaviour
             transform.Translate(direction * speed * Time.deltaTime);
         }
     }
+
 }
