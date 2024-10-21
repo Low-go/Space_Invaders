@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class EnemyMove : MonoBehaviour
 {
-    private float speed = 0.3f;
+    private float speed = 0.7f;
     private Transform player;
 
     void Start()

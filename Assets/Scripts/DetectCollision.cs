@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class DetectCollision : MonoBehaviour
 {
-    
     public string objectType;
     public ParticleSystem selfBoom;
+    private int damage = 10;
+    private GameManager gameManager;
 
     void Start()
     {
-        
+        gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found in the scene. Make sure it is present.");
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        
-
         switch (objectType)
         {
             case "Enemy":
@@ -35,31 +38,33 @@ public class DetectCollision : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Health playerHealth = other.GetComponent<Health>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage); // Damage player upon impact
+            }
             Debug.Log($"Enemy {gameObject.name} hit player. Destroying enemy.");
             ParticleSystem explosionInstance = Instantiate(selfBoom, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
-        // I dont think I need this
-        //else if (other.CompareTag("Projectile"))
-        //{
-          
-        //    selfBoom.Play();
-
-        //    //Destroy(other.gameObject); // boom projectile
-        //    //Destroy(gameObject); // boom enemy
-        //}
     }
 
     void HandleProjectileCollision(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
-
             Debug.Log("Particle effect should be playing.");
             ParticleSystem explosionInstance = Instantiate(selfBoom, transform.position, Quaternion.identity);
             explosionInstance.Play();
-            Destroy(other.gameObject); // oil enemy up
-            Destroy(gameObject); // oil projectile up
+
+          
+            if (gameManager != null)
+            {
+                gameManager.IncreaseScore(25); 
+            }
+
+            Destroy(other.gameObject); // Destroy the enemy
+            Destroy(gameObject); // Destroy the projectile
         }
         // Projectile doesn't do anything when hitting the player
     }
