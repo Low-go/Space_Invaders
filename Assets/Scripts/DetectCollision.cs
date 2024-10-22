@@ -6,7 +6,7 @@ public class DetectCollision : MonoBehaviour
 {
     public string objectType;
     public ParticleSystem selfBoom;
-    private int damage = 10;
+    private int damage = 25;
     private GameManager gameManager;
 
     void Start()
@@ -41,11 +41,17 @@ public class DetectCollision : MonoBehaviour
             Health playerHealth = other.GetComponent<Health>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(damage); // Damage player upon impact
+                playerHealth.TakeDamage(damage);
             }
             Debug.Log($"Enemy {gameObject.name} hit player. Destroying enemy.");
+
+            // Create and explicitly play the effect
             ParticleSystem explosionInstance = Instantiate(selfBoom, transform.position, Quaternion.identity);
+            Debug.Log("Collision detected with: " + other.gameObject.name);
+            explosionInstance.Play(); // Add this line
+
             Destroy(gameObject);
+            Destroy(explosionInstance.gameObject, explosionInstance.main.duration);
         }
     }
 
@@ -54,18 +60,22 @@ public class DetectCollision : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             Debug.Log("Particle effect should be playing.");
+
+            // Instantiate and play the explosion effect
             ParticleSystem explosionInstance = Instantiate(selfBoom, transform.position, Quaternion.identity);
             explosionInstance.Play();
 
-          
             if (gameManager != null)
             {
-                gameManager.IncreaseScore(25); 
+                gameManager.IncreaseScore(25);
             }
 
-            Destroy(other.gameObject); // Destroy the enemy
-            Destroy(gameObject); // Destroy the projectile
+            // Destroy both the enemy and the projectile
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+
+            // Schedule destruction of the particle system after it finishes
+            Destroy(explosionInstance.gameObject, explosionInstance.main.duration);
         }
-        // Projectile doesn't do anything when hitting the player
     }
 }

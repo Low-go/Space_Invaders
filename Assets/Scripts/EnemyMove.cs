@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class EnemyMove : MonoBehaviour
 {
     private float speed = 0.7f;
@@ -22,4 +23,9 @@ public class EnemyMove : MonoBehaviour
         }
     }
 
+    // Method to set the enemy's speed
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
 }

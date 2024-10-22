@@ -1,21 +1,23 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class Health : MonoBehaviour
 {
-    public Slider healthBar; // Reference to the Slider
-    public Image fillImage;  // Reference to the Fill Image
+    public Slider healthBar;
+    public Image fillImage;
     public int maxHealth = 100;
+    public ParticleSystem deathEffect;
+
     private int currentHealth;
     private GameManager gameManager;
-    public ParticleSystem deathEffect;
 
     void Start()
     {
         currentHealth = maxHealth;
         healthBar.maxValue = maxHealth;
         healthBar.value = currentHealth;
-        fillImage.color = Color.red;  // Start with red
+        gameManager = FindObjectOfType<GameManager>();
+        fillImage.color = Color.red;
     }
 
     public void TakeDamage(int damage)
@@ -23,12 +25,9 @@ public class Health : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         healthBar.value = currentHealth;
-
         UpdateHealthBarColor();
-
         if (currentHealth <= 0)
         {
-
             Die();
         }
     }
@@ -38,30 +37,32 @@ public class Health : MonoBehaviour
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         healthBar.value = currentHealth;
-
         UpdateHealthBarColor();
     }
 
-    // This method adjusts the color of the fill as health decreases
     private void UpdateHealthBarColor()
     {
-        // Interpolate from red (full health) to white (zero health)
         float healthPercentage = (float)currentHealth / maxHealth;
         fillImage.color = Color.Lerp(Color.white, Color.red, healthPercentage);
     }
 
-
     private void Die()
     {
-        // Play death effect if assigned
         if (deathEffect != null)
         {
             ParticleSystem effect = Instantiate(deathEffect, transform.position, Quaternion.identity);
             effect.Play();
         }
-
+        gameObject.SetActive(false); // Just disable the player
         gameManager.GameOver();
-        Destroy(gameObject);  // Destroy the player object
     }
 
+    public void ResetHealth()
+    {
+        gameObject.SetActive(true); // Re-enable the player
+        currentHealth = maxHealth;
+        healthBar.maxValue = maxHealth;
+        healthBar.value = currentHealth;
+        fillImage.color = Color.red;
+    }
 }

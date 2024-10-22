@@ -1,31 +1,31 @@
 using UnityEngine;
-using TMPro; 
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
+    public GameObject MenuUI;
+    public GameObject GamePlayUI;
+    public GameObject GameOverUI;
+    public GameObject player;
+    public Vector3 playerSpawnPosition = new Vector3(0, 0.573f, 17.88f);
+    private Quaternion playerSpawnRotation;
+
     private int score = 0;
     private bool isGameStarted;
     private bool isGameOver;
-    public GameObject MenuUI;
-    public GameObject GamePlayUI;
     private AudioSource musicAudio;
-    public GameObject player;
-    public GameObject playerPrefab;
     private SpawnManager spawnManager;
-    public GameObject GameOverUI;
-    public Vector3 playerSpawnPosition = new Vector3(0, 0.573f, 17.88f);
-
-
+    private Health playerHealth;
 
     void Start()
     {
-        
-        
+        playerSpawnRotation = player.transform.rotation;
         spawnManager = GameObject.FindObjectOfType<SpawnManager>();
         musicAudio = Camera.main.GetComponent<AudioSource>();
+        playerHealth = player.GetComponent<Health>();
         UpdateScoreDisplay();
-        player.SetActive(false); // player not visible in start menu
+        player.SetActive(false);
     }
 
     public void IncreaseScore(int amount)
@@ -46,17 +46,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     public void StartGame()
     {
-
-        // Debugging to check variable states
-        Debug.Log("Player: " + player);
-        Debug.Log("Music Audio: " + musicAudio);
-        Debug.Log("Menu UI: " + MenuUI);
-        Debug.Log("Game Play UI: " + GamePlayUI);
-        Debug.Log("Spawn Manager: " + spawnManager);
-
         isGameStarted = true;
         player.SetActive(true);
         musicAudio.Play();
@@ -68,10 +59,9 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         isGameOver = true;
-        player.SetActive(false);
         GamePlayUI.SetActive(false);
         GameOverUI.SetActive(true);
-        spawnManager.StopSpawning();  
+        spawnManager.StopSpawning();
         musicAudio.Stop();
     }
 
@@ -81,9 +71,18 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
         GameOverUI.SetActive(false);
 
-        GameObject newPlayer = Instantiate(playerPrefab, playerSpawnPosition, Quaternion.identity);
-        player = newPlayer;
+        // Reset player position
+        player.SetActive(true);
+        player.transform.position = playerSpawnPosition;
+        player.transform.rotation = playerSpawnRotation;
 
-        StartGame();  
+        // Reset health
+        playerHealth.ResetHealth();
+        UpdateScoreDisplay();
+
+        // Reset the spawn manager
+        spawnManager.ResetSpawner();
+
+        StartGame();
     }
 }
