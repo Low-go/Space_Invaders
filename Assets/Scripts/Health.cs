@@ -7,6 +7,8 @@ public class Health : MonoBehaviour
     public Image fillImage;  // Reference to the Fill Image
     public int maxHealth = 100;
     private int currentHealth;
+    private GameManager gameManager;
+    public ParticleSystem deathEffect;
 
     void Start()
     {
@@ -26,8 +28,8 @@ public class Health : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            // Call game over or player death logic here
-            Debug.Log("Player is dead");
+
+            Die();
         }
     }
 
@@ -47,4 +49,19 @@ public class Health : MonoBehaviour
         float healthPercentage = (float)currentHealth / maxHealth;
         fillImage.color = Color.Lerp(Color.white, Color.red, healthPercentage);
     }
+
+
+    private void Die()
+    {
+        // Play death effect if assigned
+        if (deathEffect != null)
+        {
+            ParticleSystem effect = Instantiate(deathEffect, transform.position, Quaternion.identity);
+            effect.Play();
+        }
+
+        gameManager.GameOver();
+        Destroy(gameObject);  // Destroy the player object
+    }
+
 }
